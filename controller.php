@@ -227,6 +227,7 @@ $(function(){
 		} 
 	});
 });
+	prevCoord = "0, 0";
 	function connectSocket(){
 		socket = new WebSocket("ws://localhost:10551/"+sessionStorage.getItem('user'));
 		socket.onopen = function (event) {
@@ -247,12 +248,15 @@ $(function(){
 					putScore();
 					resetGame();
 				}
-			} else {
+			} else if(res.type == "users") {
 				usersHTML = "<tr><td>Users</td></tr>";		
 				for(var i = 0; i < res.users.length; i++){
 					usersHTML += "<tr><td>"+res.users[i]+"</td></tr>";
 				}
 				$('#currentUsers').html(usersHTML);
+			} else if (res.type == "player" && res.id == sessionStorage.getItem('user')) {
+				document.getElementById(res.prevCoord).style.backgroundColor = "";
+				document.getElementById(res.coord).style.backgroundColor = "red";
 			}
 		}
 		document.addEventListener('keydown', function(event) { 

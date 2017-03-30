@@ -175,6 +175,15 @@ Stage.prototype.removeActor=function(actor){
 	// Lookup javascript array manipulation (indexOf and splice).
 	this.actors.splice(this.actors.indexOf(actor),1);
 }
+Stage.prototype.getPlayer=function(id){
+	for(var i = 0; i < this.actors.length; i++){
+		if(this.actors[i] instanceof Player && this.actors[i].id == id){
+			return this.actors[i];
+		}
+	}
+	return null;
+
+}
 Stage.prototype.removePlayer=function(id){
 	for(var i = 0; i<this.actors.length;i++){
 		if(this.actors[i] instanceof Player && this.actors[i].id == id){
@@ -290,7 +299,7 @@ Player.prototype.move=function(direction){
 			Stage.setImage(this.x, this.y, blankImageSrc);
 			this.x+=xDir;
 			this.y+=yDir;
-			Stage.setImage(this.x, this.y, playerImageSrc);
+		//	Stage.setImage(this.x, this.y, playerImageSrc);
 		}	 
 	}	
 }
@@ -389,28 +398,33 @@ Stage.prototype.moveBoxes=function(x, y, direction){
 	if(actor instanceof Monster) return false;
 	return this.actors[index].move(direction);
 }
-interval = null;
+updateInterval = null;
 function setupGame(){
 	stage=new Stage(20,20,"stage");
 	stage.initialize();
 }
 function startGame(){
-	if(interval == null){
-		interval = setInterval(step, 1000);
+	if(updateInterval == null){
+		updateInterval = setInterval(step, 100);
 	}
 }
 function pauseGame(){
-	clearInterval(interval);
-	interval=null;
+	clearInterval(updateInterval);
 }
 function resetGame(){
 	stage=null;
-	interval=null;
+	updateInterval=null;
 }
+counter = 0;
 function step(){
 	stage.step();
-	stage.moveMonsters();
+	counter++;
+	if(counter == 10){
+		stage.moveMonsters();
+		counter = 0;
+	}
 }
+
 setupGame();
 startGame();
 ///////////////////////// END //////////////////////////////////
@@ -441,8 +455,11 @@ wss.on('connection', function(ws) {
 	ws.on('message', function(message) {
 		var playerMove = JSON.parse(message);
 		console.log(playerMove.direction);
+		var player = stage.getPlayer(playerMove.id);
+		var prevCoord = Stage.getStageId(player.x, player.y);
 		stage.movePlayer(playerMove.direction, playerMove.id);
-		wss.broadcast(JSON.stringify({'id':'stage', 'data':stage.renderTable(), 'type':'render'}));
+	//	wss.broadcast(JSON.stringify({'id': 'stage', 'data': stage.renderTable(), 'type':'render'}));
+		wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'prevCoord': prevCoord, 'coord': Stage.getStageId(player.x, player.y)}));
 	});
 	ws.on('close', function(message){
 		console.log("DISCONNECTING PLAYER FROM BOARD");
