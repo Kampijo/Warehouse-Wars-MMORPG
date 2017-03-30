@@ -456,10 +456,11 @@ wss.on('connection', function(ws) {
 		var playerMove = JSON.parse(message);
 		console.log(playerMove.direction);
 		var player = stage.getPlayer(playerMove.id);
-		var prevCoord = Stage.getStageId(player.x, player.y);
-		stage.movePlayer(playerMove.direction, playerMove.id);
-	//	wss.broadcast(JSON.stringify({'id': 'stage', 'data': stage.renderTable(), 'type':'render'}));
-		wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'prevCoord': prevCoord, 'coord': Stage.getStageId(player.x, player.y)}));
+		if(player){
+			var prevCoord = Stage.getStageId(player.x, player.y);
+			stage.movePlayer(playerMove.direction, playerMove.id);
+			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'prevCoord': prevCoord, 'coord': Stage.getStageId(player.x, player.y)}));
+		}
 	});
 	ws.on('close', function(message){
 		console.log("DISCONNECTING PLAYER FROM BOARD");

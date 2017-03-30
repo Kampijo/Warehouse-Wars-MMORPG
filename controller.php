@@ -229,7 +229,7 @@ $(function(){
 });
 	prevCoord = "0, 0";
 	function connectSocket(){
-		socket = new WebSocket("ws://localhost:10551/"+sessionStorage.getItem('user'));
+		socket = new WebSocket("ws://cslinux.utm.utoronto.ca:10551/"+sessionStorage.getItem('user'));
 		socket.onopen = function (event) {
 			console.log("connected");
 		};
