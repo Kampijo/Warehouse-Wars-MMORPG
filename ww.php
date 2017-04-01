@@ -1,10 +1,10 @@
 // Stage
-blankImageSrc="icons/blank.gif";
-monsterImageSrc="icons/face-devil-grin-24.png";
-playerImageSrc="icons/face-cool-24.png";
-boxImageSrc="icons/emblem-package-2-24.png";
-wallImageSrc="icons/wall.jpeg";
-demonImageSrc="icons/face-devil-grin-25.png";
+blankImageSrc="static_files/icons/blank.gif";
+monsterImageSrc="static_files/icons/face-devil-grin-24.png";
+playerImageSrc="static_files/icons/face-cool-24.png";
+boxImageSrc="static_files/icons/emblem-package-2-24.png";
+wallImageSrc="static_files/icons/wall.jpeg";
+demonImageSrc="static_files/icons/face-devil-grin-25.png";
 
 function Stage(width, height){
 	this.actors=[]; // all actors on this stage (monsters, player, boxes, ...)

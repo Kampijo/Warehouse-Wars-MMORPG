@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var MongoClient = require('mongodb').MongoClient;
+const path = require('path');
 function connect(){
 	MongoClient.connect("mongodb://lopeznyg:13779@mcsdb.utm.utoronto.ca/lopeznyg_309", function(err, db) {
   		if(!err) {  
@@ -19,7 +20,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.get('/', function (req, res){
-	res.sendFile(__dirname+"/static_files/"+"index.html");
+	res.sendFile(__dirname+"/"+"index.html");
 });
 
 app.get('/authenticate', function (req, res){
