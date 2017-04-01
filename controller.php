@@ -188,6 +188,20 @@ function readKeyboard(event){
 	    }
 	}
 }
+function handleOrientation(event){
+  	x  = event.beta;
+  	y  = event.gamma;
+
+  	if(y >= 25){
+  		return "E";
+  	} if (y <= -25){
+  		return "W";
+  	} if (x <= 20) {
+  		return "N";
+  	} if (x >= 75) {
+  		return "S";
+  	}
+}
 function step(){
 	score++;
 	$('#score').html(score);
@@ -261,6 +275,9 @@ $(function(){
 		}
 		document.addEventListener('keydown', function(event) { 
 			socket.send(JSON.stringify({'direction': readKeyboard(event), 'id': sessionStorage.getItem('user')})); 
+		});
+		window.addEventListener('deviceorientation', function(event){
+			socket.send(JSON.stringify({'direction': handleOrientation(event), 'id': sessionStorage.getItem('user')}));
 		});
 		return socket;
 	}

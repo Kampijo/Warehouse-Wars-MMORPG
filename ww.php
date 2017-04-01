@@ -29,9 +29,9 @@ Stage.prototype.initialize=function(){
 				if(i == 0 || j == 0 || i == this.height-1 || j == this.width-1){
 					continue;
 				} else if(rand < 0.005){
-					this.addActor(new Demon(j, i, this));
+				//	this.addActor(new Demon(j, i, this));
 				} else if(rand < 0.05){
-					this.addActor(new Monster(j, i, this));
+				//	this.addActor(new Monster(j, i, this));
 				} else if(rand < 0.3){
 					this.addActor(new Box(j, i, this));
 				} else {
@@ -400,12 +400,12 @@ Stage.prototype.moveBoxes=function(x, y, direction){
 }
 updateInterval = null;
 function setupGame(){
-	stage=new Stage(20,20,"stage");
+	stage=new Stage(20,20);
 	stage.initialize();
 }
 function startGame(){
 	if(updateInterval == null){
-		updateInterval = setInterval(step, 100);
+		updateInterval = setInterval(step, 1000);
 	}
 }
 function pauseGame(){
@@ -415,14 +415,9 @@ function resetGame(){
 	stage=null;
 	updateInterval=null;
 }
-counter = 0;
 function step(){
 	stage.step();
-	counter++;
-	if(counter == 10){
-		stage.moveMonsters();
-		counter = 0;
-	}
+	stage.moveMonsters();
 }
 
 setupGame();
@@ -460,6 +455,7 @@ wss.on('connection', function(ws) {
 			var prevCoord = Stage.getStageId(player.x, player.y);
 			stage.movePlayer(playerMove.direction, playerMove.id);
 			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'prevCoord': prevCoord, 'coord': Stage.getStageId(player.x, player.y)}));
+			stage.step();
 		}
 	});
 	ws.on('close', function(message){
