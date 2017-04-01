@@ -14,12 +14,12 @@ function connect(){
 }
 connect();
 var port = 10550;
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname,'static_files')));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.get('/', function (req, res){
-	res.sendFile(__dirname+"/"+"index.html");
+	res.sendFile(__dirname+"/static_files/"+"index.html");
 });
 
 app.get('/authenticate', function (req, res){

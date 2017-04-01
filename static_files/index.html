@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta HTTP-EQUIV="EXPIRES" CONTENT="-1">
+		<title>Computing Science 309 Warehouse Wars</title>
+		<script language="javascript" src="jquery-3.1.1.min.js" > </script>
+		<script language="javascript" src="controller.php" > </script>
+		<link rel="stylesheet" type="text/css" href="style.css"></link>
+	</head>
+		
+	<body bgcolor="ffffff">
+		<center>
+			<h1>Warehouse Wars</h1>
+			<nav id="links">
+				<a id="logout" href="javascript:logoutFunction();">Logout</a> |
+				<a id="profile" href="javascript:showProfile();">Profile</a> |
+				<a id="play" href="javascript:playGame();">Play Now</a> 
+			</nav>
+
+			<div id="LoginPage">
+				<h1>Login</h1>
+				<form>
+					<fieldset>
+
+						<legend>Login</legend>
+
+						<p> <label for="user">User</label><input id="loginuser" type="text" name="user" value="" required>
+						<p> <label for="password">Password</label><input id="loginpasswd" type="password" name="password" required></p>
+
+						<input id="Login" type="button" value="Login"/>
+						<input id="showRegister" type="button" value ="Register"/>
+					</fieldset>
+				</form>	
+			  
+                  <h1>Hiscores</h1>
+                  <table>
+                      <div id="hiscorestable"> </div>
+                  </table>
+			</div>
+
+			<div id="RegisterPage">
+				<h1>Registration</h1>
+			    <form>
+			        <fieldset>
+			            <legend>Registration</legend>
+			            <p><label for="user">User</label> <input id="registeruser" type="text" title="Alphanumeric characters only." pattern="^[a-zA-Z0-9]+$" name="user" required>
+			            <p><label for="password">Password</label><input id="registerpasswd" type="password" title="8 characters minimum. At lease one uppercase character and one number required." 
+															pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d).{8,}$" name="password" required>
+			  
+			            <p><input id="Register" type="button" value="Submit"/>
+			        </fieldset>
+				</form>
+			</div>
+
+			<div id="ProfilePage">
+				<h1>Profile</h1>
+			    <form>
+			    	<div id="greeting"> </div>
+					<fieldset>
+						<legend>Password</legend>
+						<p><label for="password">Password</label><input id="newpasswd" type="password" title="8 characters minimum. At lease one uppercase character and one number required."
+                                                              pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d).{8,}$" name="password" required>
+						<p><input id="updatePassword" type="button" value="Update"/>
+					</fieldset>
+					<p><input id="deleteAccount" type="button" value="Delete Account?"/>
+				</form>
+				<h1>Your Scores</h1>
+				<table>
+					<div id="userscorestable"> </div>
+				</table>
+			</div>
+
+			<div id="game">
+			<center>
+			<table id="gameView">
+				<tr>
+					<td> <div id="currentUsers"> </div></td>
+					<td> <div id="stage"> </div></td> 
+					<td>
+						<center>
+							<h2>Score</h2> <div id="score"> &nbsp; </div>
+							<h2>Legend</h2>
+							<table class="legend">
+								<tr>
+									<td> <img src="icons/blank.gif" id="blankImage" /> </td>
+									<td> <img src="icons/emblem-package-2-24.png" id="boxImage" /> </td>
+									<td> <img src="icons/face-cool-24.png" id="playerImage" /> </td>
+									<td> <img src="icons/face-devil-grin-24.png" id="monsterImage" /> </td>
+									<td> <img src="icons/face-devil-grin-25.png" id="demonImage" /> </td>
+									<td> <img src="icons/wall.jpeg" width="20px" height="20px" id="wallImage" /> </td>
+								</tr>
+								<tr>
+									<td> Empty <br/> Square </td>
+									<td> Box </td>
+									<td> Player </td>
+									<td> Monster </td>
+									<td> Demon </td>
+									<td> Wall </td>
+								</tr>
+							</table>
+							<h2>Controls</h2>
+							<table class="controls">
+								<tr>
+									<td><img src="icons/north_west.svg" onclick=movePlayer('NW'); /></td>
+									<td><img src="icons/north.svg" onclick=movePlayer('N'); /></td>
+									<td><img src="icons/north_east.svg" onclick=movePlayer('NE'); /></td>
+								</tr>
+								<tr>
+									<td><img src="icons/west.svg" onclick=movePlayer('W'); /></td>
+									<td>&nbsp;</td>
+									<td><img src="icons/east.svg" onclick=movePlayer('E'); /></td>
+								</tr>
+								<tr>
+									<td><img src="icons/south_west.svg" onclick=movePlayer('SW'); /></td>
+									<td><img src="icons/south.svg" onclick=movePlayer('S'); /></td>
+									<td><img src="icons/south_east.svg" onclick=movePlayer('SE'); /></td>
+								</tr>
+							</table>
+						</center>
+					</td>
+				</tr>
+			</table>
+		</center>
+		</div>
+		</center>
+	</body>
+</html>
+

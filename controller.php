@@ -1,16 +1,23 @@
 stage=null;
 interval=null;
+mobileInterval=null;
 score=0;
 socket = null;
+direction= "":
+
 function alertStuff(data){ alert(JSON.stringify(data)); }
 function startGame(){
 	if(interval == null){
 		interval = setInterval(step, 1000);
+	} if (mobileInterval == null){
+		mobileInterval = setInterval(sendMobile, 100);
 	}
 }
 function resetGame(){
 	clearInterval(interval);
+	clearInterval(mobileInterval);
 	interval=null;
+	mobileInterval=null;
 	score=0;
 }
 
@@ -193,18 +200,23 @@ function handleOrientation(event){
   	y  = event.gamma;
 
   	if(y >= 25){
-  		return "E";
+  		direction = "E";
   	} if (y <= -25){
-  		return "W";
+  		direction = "W";
   	} if (x <= 20) {
-  		return "N";
+  		direction = "N";
   	} if (x >= 75) {
-  		return "S";
+  		direction = "S";
+  	} else {
+  		direction = "";
   	}
 }
 function step(){
 	score++;
 	$('#score').html(score);
+}
+function sendMobile(){
+	socket.send(JSON.stringify({'direction': direction, 'id': sessionStorage.getItem('user')}));
 }
 $(function(){
 
@@ -241,7 +253,6 @@ $(function(){
 		} 
 	});
 });
-	prevCoord = "0, 0";
 	function connectSocket(){
 		socket = new WebSocket("ws://cslinux.utm.utoronto.ca:10551/"+sessionStorage.getItem('user'));
 		socket.onopen = function (event) {
@@ -276,10 +287,7 @@ $(function(){
 		document.addEventListener('keydown', function(event) { 
 			socket.send(JSON.stringify({'direction': readKeyboard(event), 'id': sessionStorage.getItem('user')})); 
 		});
-		window.addEventListener('deviceorientation', function(event){
-			socket.send(JSON.stringify({'direction': handleOrientation(event), 'id': sessionStorage.getItem('user')}));
-		});
-		return socket;
+		window.addEventListener('deviceorientation', handleOrientation);
 	}
 	function closeSocket(){
 		socket.close();
