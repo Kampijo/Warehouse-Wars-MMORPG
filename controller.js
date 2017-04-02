@@ -285,7 +285,7 @@ $(function(){
 	var ctx = canvas.getContext('2d');
 
 	function connectSocket(){
-		socket = new WebSocket("ws://cslinux.utm.utoronto.ca:10551/"+sessionStorage.getItem('user'));
+		socket = new WebSocket("ws://cslinux.utm.utoronto.ca:gameporthere/"+sessionStorage.getItem('user'));
 		socket.onopen = function (event) {
 			console.log("connected");
 		};

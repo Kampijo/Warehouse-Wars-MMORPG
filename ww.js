@@ -22,13 +22,13 @@ Stage.prototype.initialize=function(){
 			if(i != this.centerHeight || j != this.centerWidth){
 				if(i == 0 || j == 0 || i == this.height-1 || j == this.width-1){
 					continue;
-				} else if(rand < 0.001){
+				} else if(rand < 0.005){
 					this.addActor(new Teleporter(j, i, this));
-				} else if(rand < 0.0025){
+				} else if(rand < 0.0075){
 				    this.addActor(new Demon(j, i, this));
-			    } else if(rand < 0.05){
+			    } else if(rand < 0.03){
 					this.addActor(new Monster(j, i, this));
-				} else if(rand < 0.1){
+				} else if(rand < 0.25){
 					this.addActor(new Box(j, i, this));
 				} else {
 					continue;
@@ -127,8 +127,8 @@ Monster.prototype.move=function(){
 }
 
 Teleporter.prototype.move=function(){
-	xDir = getRandomInt(1,this.width-1);
-	yDir = getRandomMove(1, this.height-1);
+	xDir = getRandomInt(2,this.stage.width-2);
+	yDir = getRandomInt(2, this.stage.height-2);
 	nextCell = this.stage.getActor(xDir, yDir);
 	if(this.stage.checkMovement(this.x, this.y)){ 
 		if(nextCell == null || nextCell instanceof Player){
@@ -442,7 +442,7 @@ world["status"] = "";
 world["users"] = [];
 
 WebSocketServer = require('ws').Server
-   ,wss = new WebSocketServer({port: 10551, clientTracking: true});
+   ,wss = new WebSocketServer({port: gameporthere, clientTracking: true});
 	
 wss.on('close', function() {
     console.log('Disconnected');

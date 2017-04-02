@@ -4,7 +4,7 @@ var app = express();
 var MongoClient = require('mongodb').MongoClient;
 const path = require('path');
 function connect(){
-	MongoClient.connect("mongodb://lopeznyg:13779@mcsdb.utm.utoronto.ca/lopeznyg_309", function(err, db) {
+	MongoClient.connect("mongodb://userhere:passwordhere@mcsdb.utm.utoronto.ca/dbnamehere", function(err, db) {
   		if(!err) {  
 			db.createCollection('users', function(err, collection) {});
 			db.createCollection('scores', function(err, collection) {});
@@ -14,7 +14,7 @@ function connect(){
 	});
 }
 connect();
-var port = 10550;
+var port = apiporthere;
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname,'static_files')));
 app.use(bodyParser.urlencoded({extended: true}));
