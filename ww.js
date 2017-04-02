@@ -446,7 +446,7 @@ WebSocketServer = require('ws').Server;
 wss = new WebSocketServer({port: gameporthere, clientTracking: true});
 	
 wss.on('close', function() {
-    console.log('Disconnected');
+    console.log('disconnected');
 	world['status'] = 'offline';
 });
 
@@ -464,7 +464,6 @@ wss.on('connection', function(ws) {
 	stage.render(ws);
 	ws.on('message', function(message) {
 		var playerMove = JSON.parse(message);
-		console.log(playerMove.direction);
 		var player = stage.getPlayer(playerMove.id);
 		if(player){
 			stage.movePlayer(playerMove.direction, playerMove.id);
@@ -472,7 +471,6 @@ wss.on('connection', function(ws) {
 		}
 	});
 	ws.on('close', function(message){
-		console.log("DISCONNECTING PLAYER FROM BOARD");
 		var userID = ws.upgradeReq.url.substring(1);
 		stage.removePlayer(userID);
 		world["users"].splice(world["users"].indexOf(userID), 1);
