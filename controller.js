@@ -215,13 +215,13 @@ function handleOrientation(event){
 		  		socket.send(JSON.stringify({'direction': "No change", 'id': sessionStorage.getItem('user')})); 
 		  	}
 		} else {
-			if(x >= 25){
+			if(x >= 15){
 		  		socket.send(JSON.stringify({'direction': "E", 'id': sessionStorage.getItem('user')})); 
-		  	} if (x <= -15){
+		  	} if (x <= -10){
 		  		socket.send(JSON.stringify({'direction': "W", 'id': sessionStorage.getItem('user')})); 
-		  	} if (y <= -15) {
+		  	} if (y >= -25) {
 		  		socket.send(JSON.stringify({'direction': "N", 'id': sessionStorage.getItem('user')})); 
-		  	} else if (y >= -75) {
+		  	} else if (y <= -65) {
 		  		socket.send(JSON.stringify({'direction': "S", 'id': sessionStorage.getItem('user')})); 
 		  	} else {
 		  		socket.send(JSON.stringify({'direction': "No change", 'id': sessionStorage.getItem('user')})); 

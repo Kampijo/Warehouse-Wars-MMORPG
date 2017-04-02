@@ -23,9 +23,9 @@ Stage.prototype.initialize=function(){
 				if(i == 0 || j == 0 || i == this.height-1 || j == this.width-1){
 					continue;
 				} else if(rand < 0.005){
-					this.addActor(new Demon(j, i, this));
+				//	this.addActor(new Demon(j, i, this));
 				} else if(rand < 0.025){
-					this.addActor(new Monster(j, i, this));
+				//	this.addActor(new Monster(j, i, this));
 				} else if(rand < 0.3){
 					this.addActor(new Box(j, i, this));
 				} else {
@@ -34,6 +34,7 @@ Stage.prototype.initialize=function(){
 			} 
 		}
 	}
+	this.addActor(new Demon(9,1, this));
 }
 Stage.prototype.render=function(ws){
 
