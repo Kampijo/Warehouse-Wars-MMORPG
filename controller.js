@@ -260,6 +260,13 @@ $(function(){
 			deleteAccount();
 		} 
 	});
+	var Shake = require('shake.js');
+	var shakeEvent = new Shake({
+	 		threshold: 15, // optional shake strength threshold
+		timeout: 1000 // optional, determines the frequency of event generation
+	});
+	shakeEvent.start();
+	window.addEventListener('shake', userFunction, false);
 });
 	var canvas = document.getElementById('stage');
 	var ctx = canvas.getContext('2d');
@@ -300,12 +307,6 @@ $(function(){
 		if(window.DeviceOrientationEvent){
 			window.addEventListener('deviceorientation', handleOrientation);
 		}
-		var shakeEvent = new Shake({
-   	 		threshold: 15, // optional shake strength threshold
-    		timeout: 1000 // optional, determines the frequency of event generation
-		});
-		shakeEvent.start();
-		window.addEventListener('shake', userFunction, false);
 
 	}
 	function closeSocket(){
