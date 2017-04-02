@@ -41,35 +41,29 @@ Stage.prototype.initialize=function(){
 		}
 	}
 }
-Stage.prototype.renderTable=function(){
-
-	var s='<table style="border-collapse:collapse;">';
+Stage.prototype.render=function(ws){
 
 	for(i=0; i < this.height; i++){
-		s+="<tr>";
 		for(j=0; j < this.width; j++){
 			
 			if(i == 0 || j == 0 || i == this.height-1 || j == this.width-1){
-				s+="<td><img id="+i+","+j+" src="+wallImageSrc+" width=25 height=25 /></td>";
+				ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'wallImage'}));
 			} else {
 				cell = this.getActor(j, i);
 				if(cell instanceof Demon){
-					s+="<td><img id="+i+","+j+" src="+demonImageSrc+" /></td>";
+					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'demonImage'}));
 				} else if (cell instanceof Monster){
-					s+="<td><img id="+i+","+j+" src="+monsterImageSrc+" /></td>";
+					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'monsterImage'}));
 				} else if (cell instanceof Box){
-					s+="<td><img id="+i+","+j+" src="+boxImageSrc+" /></td>";
+					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'boxImage'}));
 				} else if (cell instanceof Player){
-					s+="<td><img id="+i+","+j+" src="+playerImageSrc+" /></td>";
+					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'playerImage'}));
 				} else {
-					s+="<td><img id="+i+","+j+" src="+blankImageSrc+" /></td>";
+					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'blankImage'}));
 				}
 			}
 		}
-		s+="</tr>";
 	}
-	s+="</table>";
-	return s;
 }
 
 function Player(x, y, stage, id){
@@ -112,10 +106,10 @@ Monster.prototype.move=function(){
 	nextCell = this.stage.getActor(this.x+xDir,this.y+yDir);
 	if(this.stage.checkMovement(this.x, this.y)){ 
 		if(this.stage.check(this.x+xDir, this.y+yDir) && (nextCell == null || nextCell instanceof Player)){
-			Stage.setImage(this.x, this.y, blankImageSrc);
+			Stage.setImage(this.x, this.y, 'blankImage');
 			this.x+=xDir;
 			this.y+=yDir;
-			Stage.setImage(this.x, this.y, monsterImageSrc);
+			Stage.setImage(this.x, this.y, 'monsterImage');
 			if(nextCell != null && nextCell instanceof Player){
 				wss.broadcast(JSON.stringify({'id': nextCell.id, 'type':'death'}));
 				console.log("GAME OVER!");
@@ -124,7 +118,7 @@ Monster.prototype.move=function(){
         }
 	} else {
 		this.stage.removeActor(this);
-		Stage.setImage(this.x, this.y, blankImageSrc);				
+		Stage.setImage(this.x, this.y, 'blankImage');				
         console.log("MONSTER KILLED at "+this.x+", "+this.y);
 	}
 }
@@ -143,10 +137,10 @@ Demon.prototype.move=function(){
 				}
 			}
 		}
-		Stage.setImage(this.x, this.y, blankImageSrc);
+		Stage.setImage(this.x, this.y, 'blankImage');
 		this.x+=xDir;
 		this.y+=yDir;
-		Stage.setImage(this.x, this.y, demonImageSrc);
+		Stage.setImage(this.x, this.y, 'demonImage');
 		if(nextCell != null && nextCell instanceof Player){
 			wss.broadcast(JSON.stringify({'id': nextCell.id, 'type':'death'}));
 			console.log("GAME OVER!");
@@ -154,7 +148,7 @@ Demon.prototype.move=function(){
 		 }
 	} else {
 		this.stage.removeActor(this);
-		Stage.setImage(this.x, this.y, blankImageSrc);
+		Stage.setImage(this.x, this.y, 'blankImage');
 		console.log("MONSTER KILLED at "+this.x+", "+this.y);
 	}
 }
@@ -164,7 +158,7 @@ Demon.prototype.move=function(){
 Stage.getStageId=function(x,y){ return y+","+x; }
 // Set the src of the image at stage location (x,y) to src
 Stage.setImage=function(x, y, src){
-	var data = JSON.stringify({'data':src, 'id':this.getStageId(x,y), 'type':'update'});
+	var data = JSON.stringify({'src':src, 'x':x*25, 'y':y*25, 'type':'render'});
 	wss.broadcast(data);
 }
 Stage.prototype.addActor=function(actor){
@@ -187,6 +181,7 @@ Stage.prototype.getPlayer=function(id){
 Stage.prototype.removePlayer=function(id){
 	for(var i = 0; i<this.actors.length;i++){
 		if(this.actors[i] instanceof Player && this.actors[i].id == id){
+			Stage.setImage(this.actors[i].x, this.actors[i].y, 'blankImage');
 			this.actors.splice(i,1);
 		}
 	}
@@ -225,15 +220,11 @@ Stage.prototype.checkMovement=function(x,y){
 Stage.prototype.step=function(){
 	for(var i=0;i<this.actors.length;i++){
 		var actor = this.actors[i];
-		if(actor instanceof Box){
-		    Stage.setImage(actor.x, actor.y,boxImageSrc);
-		} else if(actor instanceof Monster){
-			Stage.setImage(actor.x,actor.y,monsterImageSrc);
+		if(actor instanceof Monster){
+			Stage.setImage(actor.x,actor.y, 'monsterImage');
 		} else if(actor instanceof Demon){
-			Stage.setImage(actor.x, actor.y,demonImageSrc);
-		} else {
-			Stage.setImage(actor.x,actor.y,playerImageSrc);
-		}
+			Stage.setImage(actor.x, actor.y, 'demonImage');
+		} 
 	}
 }
 
@@ -296,10 +287,10 @@ Player.prototype.move=function(direction){
 	}
 	if(xDir != 0 || yDir != 0){
 		if(this.stage.moveBoxes(this.x+xDir, this.y+yDir, direction)){
-			Stage.setImage(this.x, this.y, blankImageSrc);
+			Stage.setImage(this.x, this.y, 'blankImage');
 			this.x+=xDir;
 			this.y+=yDir;
-		//	Stage.setImage(this.x, this.y, playerImageSrc);
+			Stage.setImage(this.x, this.y, 'playerImage');
 		}	 
 	}	
 }
@@ -369,18 +360,20 @@ Box.prototype.move=function(direction){
 	if(xDir != 0 || yDir != 0){
 		var actor = this.stage.getActor(this.x+xDir, this.y+yDir);
 		if(actor == null) {
+			Stage.setImage(this.x, this.y, 'blankImage');
 			this.x+=xDir;
 			this.y+=yDir;
+			Stage.setImage(this.x, this.y, 'boxImage');
 			return true;
 		}
 		if(actor instanceof Monster){
 			return false;
 		}
 		if(actor.move(direction)){
-			Stage.setImage(this.x, this.y, blankImageSrc);
+			Stage.setImage(this.x, this.y, 'blankImage');
 			this.x+=xDir;
 			this.y+=yDir;
-			Stage.setImage(this.x, this.y, boxImageSrc);
+			Stage.setImage(this.x, this.y, 'boxImage');
 			return true;
 		} else {
 			return false;
@@ -416,9 +409,9 @@ function resetGame(){
 	updateInterval=null;
 }
 function step(){
-	stage.step();
 	stage.moveMonsters();
 }
+
 
 setupGame();
 startGame();
@@ -441,12 +434,13 @@ wss.broadcast = function(message){
 		ws.send(message); 
 	}
 }
+
 wss.on('connection', function(ws) {
 	var userID = ws.upgradeReq.url.substring(1);
 	world["users"].push(userID);
 	wss.broadcast(JSON.stringify({'type': 'users', 'users': world["users"]}));
 	stage.addActor(new Player(stage.centerWidth, stage.centerHeight, stage, userID));
-	ws.send(JSON.stringify({'id':'stage', 'data': stage.renderTable(), 'type':'render'}));
+	stage.render(ws);
 	ws.on('message', function(message) {
 		var playerMove = JSON.parse(message);
 		console.log(playerMove.direction);
@@ -454,8 +448,8 @@ wss.on('connection', function(ws) {
 		if(player){
 			var prevCoord = Stage.getStageId(player.x, player.y);
 			stage.movePlayer(playerMove.direction, playerMove.id);
-			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'prevCoord': prevCoord, 'coord': Stage.getStageId(player.x, player.y)}));
-			stage.step();
+			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'x': player.x, 'y': player.y}));
+			//stage.step();
 		}
 	});
 	ws.on('close', function(message){

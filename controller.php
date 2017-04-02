@@ -1,26 +1,23 @@
 stage=null;
 interval=null;
 mobileInterval=null;
+move = false;
 score=0;
 socket = null;
-direction= "":
+login=false;
 
 function alertStuff(data){ alert(JSON.stringify(data)); }
 function startGame(){
-	if(interval == null){
-		interval = setInterval(step, 1000);
-	} if (mobileInterval == null){
-		mobileInterval = setInterval(sendMobile, 100);
-	}
+	if(interval == null) interval = setInterval(step, 1000);
+	if(mobileInterval == null) mobileInterval = setInterval(sendMobile, 250);
 }
 function resetGame(){
 	clearInterval(interval);
-	clearInterval(mobileInterval);
+	clearInterval(mobileInterval)
 	interval=null;
 	mobileInterval=null;
 	score=0;
 }
-
 function playGame(){
 	resetGame();
 	startGame();
@@ -67,7 +64,8 @@ function loginFunction(){
 		sessionStorage.setItem('user',$("#loginuser").val());
 		sessionStorage.setItem('pass',$("#loginpasswd").val());
 		$("#links").show();
-        	playGame();
+		if(!login) playGame();
+		login=true;
 	}).fail(function(data){
 		var response = JSON.parse(data["responseText"]);
 		alert(response["status"]);
@@ -77,6 +75,7 @@ function loginFunction(){
 }
 function logoutFunction(){
 	closeSocket();
+	login=false;
 	sessionStorage.clear();
 	window.location.reload();	
 }
@@ -109,7 +108,8 @@ function registerFunction(){
 		sessionStorage.setItem('user', $("#registeruser").val());
 		sessionStorage.setItem('pass', $("#registerpasswd").val());
 		$('#links').show();
-		playGame();
+		if(!login) playGame();
+		login=true;
 	}).fail(function(data){
 		var response = JSON.parse(data["responseText"]);
 		alert(response["status"]);
@@ -196,19 +196,23 @@ function readKeyboard(event){
 	}
 }
 function handleOrientation(event){
-  	x  = event.beta;
-  	y  = event.gamma;
 
-  	if(y >= 25){
-  		direction = "E";
-  	} if (y <= -25){
-  		direction = "W";
-  	} if (x <= 20) {
-  		direction = "N";
-  	} if (x >= 75) {
-  		direction = "S";
-  	} else {
-  		direction = "";
+	if(move){
+	  	x  = event.beta;
+	  	y  = event.gamma;
+
+	  	if(y >= 25){
+	  		socket.send(JSON.stringify({'direction': "E", 'id': sessionStorage.getItem('user')})); 
+	  	} if (y <= -25){
+	  		socket.send(JSON.stringify({'direction': "W", 'id': sessionStorage.getItem('user')})); 
+	  	} if (x <= 20) {
+	  		socket.send(JSON.stringify({'direction': "N", 'id': sessionStorage.getItem('user')})); 
+	  	} else if (x >= 75) {
+	  		socket.send(JSON.stringify({'direction': "S", 'id': sessionStorage.getItem('user')})); 
+	  	} else {
+	  		socket.send(JSON.stringify({'direction': "No change", 'id': sessionStorage.getItem('user')})); 
+	  	}
+	  	move = false;
   	}
 }
 function step(){
@@ -216,7 +220,7 @@ function step(){
 	$('#score').html(score);
 }
 function sendMobile(){
-	socket.send(JSON.stringify({'direction': direction, 'id': sessionStorage.getItem('user')}));
+	move = true;
 }
 $(function(){
 
@@ -253,6 +257,9 @@ $(function(){
 		} 
 	});
 });
+	var canvas = document.getElementById('stage');
+	var ctx = canvas.getContext('2d');
+
 	function connectSocket(){
 		socket = new WebSocket("ws://cslinux.utm.utoronto.ca:10551/"+sessionStorage.getItem('user'));
 		socket.onopen = function (event) {
@@ -264,9 +271,9 @@ $(function(){
 		socket.onmessage = function (event) {
 			var res = JSON.parse(event.data);
 			if(res.type == "render"){ 
-				document.getElementById(res.id).innerHTML = res.data;
-			} else if(res.type == "update"){
-				document.getElementById(res.id).src = res.data;		
+				var img = document.getElementById(res.src);
+				console.log(img.src+" at "+res.x+","+res.y);
+				ctx.drawImage(img, res.x, res.y, 24, 24);		
 			} else if(res.type == "death"){
 				if(res.id == sessionStorage.getItem('user')){
 					socket.close();
@@ -280,14 +287,14 @@ $(function(){
 				}
 				$('#currentUsers').html(usersHTML);
 			} else if (res.type == "player" && res.id == sessionStorage.getItem('user')) {
-				document.getElementById(res.prevCoord).style.backgroundColor = "";
-				document.getElementById(res.coord).style.backgroundColor = "red";
 			}
 		}
 		document.addEventListener('keydown', function(event) { 
 			socket.send(JSON.stringify({'direction': readKeyboard(event), 'id': sessionStorage.getItem('user')})); 
 		});
-		window.addEventListener('deviceorientation', handleOrientation);
+		if(window.DeviceOrientationEvent){
+			window.addEventListener('deviceorientation', handleOrientation);
+		}
 	}
 	function closeSocket(){
 		socket.close();
