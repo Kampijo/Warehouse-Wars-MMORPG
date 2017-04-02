@@ -3,8 +3,8 @@ parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 read -p "Enter database name: " dbname
 read -p "Enter UTORid: " utorid
 read -s -p "Enter password: " password
-read -s "Enter port for API: " apiport
-read -s "Enter port for game: " gameport
+read -p "Enter port for API: " apiport
+read -p "Enter port for game: " gameport
 
 echo -e "\n"
 
