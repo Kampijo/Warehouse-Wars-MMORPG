@@ -429,7 +429,7 @@ function step(){
 		resetGame();
 		setupGame();
 		startGame();
-		wss = new WebSocketServer({port: 10551, clientTracking: true});
+		wss = new WebSocketServer({port: gameporthere, clientTracking: true});
 	}
 }
 
