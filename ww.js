@@ -360,7 +360,7 @@ Box.prototype.move=function(direction){
 			Stage.setImage(this.x, this.y, 'boxImage');
 			return true;
 		}
-		if(actor instanceof Monster){
+		if(actor instanceof Monster || actor instanceof Player){
 			return false;
 		}
 		if(actor.move(direction)){
@@ -382,7 +382,7 @@ Stage.prototype.moveBoxes=function(x, y, direction){
 	var actor = this.getActor(x, y);
 	var index = this.actors.indexOf(actor);
 	if(actor == null) return true;
-	if(actor instanceof Monster) return false;
+	if(actor instanceof Monster || actor instanceof Player) return false;
 	return this.actors[index].move(direction);
 }
 updateInterval = null;
@@ -441,7 +441,7 @@ wss.on('connection', function(ws) {
 		var player = stage.getPlayer(playerMove.id);
 		if(player){
 			stage.movePlayer(playerMove.direction, playerMove.id);
-			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'x': player.x, 'y': player.y}));
+			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'x': player.x*25, 'y': player.y*25}));
 			//stage.step();
 		}
 	});
