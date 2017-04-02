@@ -197,21 +197,36 @@ function readKeyboard(event){
 }
 function handleOrientation(event){
 
+	var orientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
 	if(move){
 	  	x  = event.beta;
 	  	y  = event.gamma;
 
-	  	if(y >= 25){
-	  		socket.send(JSON.stringify({'direction': "E", 'id': sessionStorage.getItem('user')})); 
-	  	} if (y <= -25){
-	  		socket.send(JSON.stringify({'direction': "W", 'id': sessionStorage.getItem('user')})); 
-	  	} if (x <= 20) {
-	  		socket.send(JSON.stringify({'direction': "N", 'id': sessionStorage.getItem('user')})); 
-	  	} else if (x >= 75) {
-	  		socket.send(JSON.stringify({'direction': "S", 'id': sessionStorage.getItem('user')})); 
-	  	} else {
-	  		socket.send(JSON.stringify({'direction': "No change", 'id': sessionStorage.getItem('user')})); 
-	  	}
+	  	if(orientation.type == "portrait-primary"){
+		  	if(y >= 25){
+		  		socket.send(JSON.stringify({'direction': "E", 'id': sessionStorage.getItem('user')})); 
+		  	} if (y <= -25){
+		  		socket.send(JSON.stringify({'direction': "W", 'id': sessionStorage.getItem('user')})); 
+		  	} if (x <= 20) {
+		  		socket.send(JSON.stringify({'direction': "N", 'id': sessionStorage.getItem('user')})); 
+		  	} else if (x >= 75) {
+		  		socket.send(JSON.stringify({'direction': "S", 'id': sessionStorage.getItem('user')})); 
+		  	} else {
+		  		socket.send(JSON.stringify({'direction': "No change", 'id': sessionStorage.getItem('user')})); 
+		  	}
+		} else {
+			if(x >= 25){
+		  		socket.send(JSON.stringify({'direction': "E", 'id': sessionStorage.getItem('user')})); 
+		  	} if (x <= -15){
+		  		socket.send(JSON.stringify({'direction': "W", 'id': sessionStorage.getItem('user')})); 
+		  	} if (y <= -15) {
+		  		socket.send(JSON.stringify({'direction': "N", 'id': sessionStorage.getItem('user')})); 
+		  	} else if (y >= -75) {
+		  		socket.send(JSON.stringify({'direction': "S", 'id': sessionStorage.getItem('user')})); 
+		  	} else {
+		  		socket.send(JSON.stringify({'direction': "No change", 'id': sessionStorage.getItem('user')})); 
+		  	}
+		}
 	  	move = false;
   	}
 }
