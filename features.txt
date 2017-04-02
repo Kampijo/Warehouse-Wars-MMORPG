@@ -1,5 +1,0 @@
-1. REST API login pattern
-2. Greeting on profile page
-3. Delete account button on profile page
-4. Input sanitization
-5. Password policy when registering
