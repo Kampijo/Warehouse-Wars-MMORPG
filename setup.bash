@@ -5,7 +5,7 @@ read -p "Enter port for game: " gameport
 read -p "Enter database name: " dbname
 read -p "Enter UTORid: " utorid
 read -s -p "Enter password: " password
-
+echo -e "\n"
 cd "$parent_path"
 sed -i "s/dbnamehere/$dbname/g" index.js
 sed -i "s/userhere/$utorid/g" index.js
