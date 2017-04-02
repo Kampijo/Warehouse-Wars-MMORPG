@@ -127,15 +127,15 @@ Monster.prototype.move=function(){
 }
 
 Teleporter.prototype.move=function(){
-	xDir = randomInt(1,this.width-1);
-	yDir = randomMove(1, this.height-1);
-	nextCell = this.stage.getActor(this.x+xDir,this.y+yDir);
+	xDir = getRandomInt(1,this.width-1);
+	yDir = getRandomMove(1, this.height-1);
+	nextCell = this.stage.getActor(xDir, yDir);
 	if(this.stage.checkMovement(this.x, this.y)){ 
-		if(this.stage.check(this.x+xDir, this.y+yDir) && (nextCell == null || nextCell instanceof Player)){
+		if(nextCell == null || nextCell instanceof Player){
 			Stage.setImage(this.x, this.y, 'blankImage');
-			this.x+=xDir;
-			this.y+=yDir;
-			Stage.setImage(this.x, this.y, 'monsterImage');
+			this.x=xDir;
+			this.y=yDir;
+			Stage.setImage(this.x, this.y, 'teleporterImage');
 			if(nextCell != null && nextCell instanceof Player){
 				wss.broadcast(JSON.stringify({'id': nextCell.id, 'type':'death'}));
 				console.log("GAME OVER!");
