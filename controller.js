@@ -222,6 +222,10 @@ function step(){
 function sendMobile(){
 	move = true;
 }
+function userFunction(){
+	if(login) logoutFunction;
+	else loginFunction;
+}
 $(function(){
 
 	$('#LoginPage').show();
@@ -267,18 +271,17 @@ $(function(){
 		};
 		socket.onclose = function (event) {
 			console.log("disconnected");
+			putScore();
+			resetGame();
 		};
 		socket.onmessage = function (event) {
 			var res = JSON.parse(event.data);
 			if(res.type == "render"){ 
 				var img = document.getElementById(res.src);
-				console.log(img.src+" at "+res.x+","+res.y);
-				ctx.drawImage(img, res.x, res.y, 24, 24);		
+				ctx.drawImage(img, res.x, res.y, 25, 25);		
 			} else if(res.type == "death"){
 				if(res.id == sessionStorage.getItem('user')){
 					socket.close();
-					putScore();
-					resetGame();
 				}
 			} else if(res.type == "users") {
 				usersHTML = "<tr><td>Users</td></tr>";		
@@ -288,8 +291,7 @@ $(function(){
 				$('#currentUsers').html(usersHTML);
 			} else if (res.type == "player" && res.id == sessionStorage.getItem('user')) {
 				var img = document.getElementById("You");
-				console.log(img.src+" at "+res.x+","+res.y);
-				ctx.drawImage(img, res.x, res.y, 24, 24);	
+				ctx.drawImage(img, res.x, res.y, 25, 25);	
 			}
 		}
 		document.addEventListener('keydown', function(event) { 
@@ -298,6 +300,13 @@ $(function(){
 		if(window.DeviceOrientationEvent){
 			window.addEventListener('deviceorientation', handleOrientation);
 		}
+		var shakeEvent = new Shake({
+   	 		threshold: 15, // optional shake strength threshold
+    		timeout: 1000 // optional, determines the frequency of event generation
+		});
+		shakeEvent.start();
+		window.addEventListener('shake', userFunction, false);
+
 	}
 	function closeSocket(){
 		socket.close();

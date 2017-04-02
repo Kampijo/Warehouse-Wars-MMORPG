@@ -23,9 +23,9 @@ Stage.prototype.initialize=function(){
 				if(i == 0 || j == 0 || i == this.height-1 || j == this.width-1){
 					continue;
 				} else if(rand < 0.005){
-				//	this.addActor(new Demon(j, i, this));
+					this.addActor(new Demon(j, i, this));
 				} else if(rand < 0.05){
-				//	this.addActor(new Monster(j, i, this));
+					this.addActor(new Monster(j, i, this));
 				} else if(rand < 0.3){
 					this.addActor(new Box(j, i, this));
 				} else {
@@ -210,25 +210,15 @@ Stage.prototype.checkMovement=function(x,y){
 	return false;	
 }
 
-// Take one step in the animation of the game.  
-Stage.prototype.step=function(){
-	for(var i=0;i<this.actors.length;i++){
-		var actor = this.actors[i];
-		if(actor instanceof Monster){
-			Stage.setImage(actor.x,actor.y, 'monsterImage');
-		} else if(actor instanceof Demon){
-			Stage.setImage(actor.x, actor.y, 'demonImage');
-		} 
-	}
-}
-
-
 Stage.prototype.moveMonsters=function(){
+	var monsters = false;
 	for(var i=0;i<this.actors.length;i++){
 		if(this.actors[i] instanceof Monster || this.actors[i] instanceof Demon){
 			this.actors[i].move();	
+			monsters = true;
 		}
 	}
+	return monsters;
 }
 Player.prototype.move=function(direction){
 	xDir = 0;
@@ -403,7 +393,13 @@ function resetGame(){
 	updateInterval=null;
 }
 function step(){
-	stage.moveMonsters();
+	monsters = stage.moveMonsters();
+	if(!monsters){
+		wss.close();
+		resetGame();
+		setupGame();
+		startGame();
+	}
 }
 
 
@@ -442,7 +438,6 @@ wss.on('connection', function(ws) {
 		if(player){
 			stage.movePlayer(playerMove.direction, playerMove.id);
 			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'x': player.x*25, 'y': player.y*25}));
-			//stage.step();
 		}
 	});
 	ws.on('close', function(message){
