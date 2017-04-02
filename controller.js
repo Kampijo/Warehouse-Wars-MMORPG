@@ -223,8 +223,7 @@ function sendMobile(){
 	move = true;
 }
 function userFunction(){
-	if(login) logoutFunction;
-	else loginFunction;
+	alert("SHAKE! SHAKE!");
 }
 $(function(){
 
@@ -260,10 +259,8 @@ $(function(){
 			deleteAccount();
 		} 
 	});
-	var Shake = require('shake.js');
 	var shakeEvent = new Shake({
-	 		threshold: 15, // optional shake strength threshold
-		timeout: 1000 // optional, determines the frequency of event generation
+	 		threshold: 15
 	});
 	shakeEvent.start();
 	window.addEventListener('shake', userFunction, false);
