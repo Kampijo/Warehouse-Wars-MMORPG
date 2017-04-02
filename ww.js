@@ -429,6 +429,7 @@ function step(){
 		resetGame();
 		setupGame();
 		startGame();
+		wss = new WebSocketServer({port: 10551, clientTracking: true});
 	}
 }
 
@@ -441,8 +442,8 @@ var world = {};
 world["status"] = "";
 world["users"] = [];
 
-WebSocketServer = require('ws').Server
-   ,wss = new WebSocketServer({port: gameporthere, clientTracking: true});
+WebSocketServer = require('ws').Server;
+wss = new WebSocketServer({port: gameporthere, clientTracking: true});
 	
 wss.on('close', function() {
     console.log('Disconnected');
