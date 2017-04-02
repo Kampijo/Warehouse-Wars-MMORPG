@@ -22,11 +22,13 @@ Stage.prototype.initialize=function(){
 			if(i != this.centerHeight || j != this.centerWidth){
 				if(i == 0 || j == 0 || i == this.height-1 || j == this.width-1){
 					continue;
-				} else if(rand < 0.005){
-				//	this.addActor(new Demon(j, i, this));
-				} else if(rand < 0.025){
-				//	this.addActor(new Monster(j, i, this));
-				} else if(rand < 0.3){
+				} else if(rand < 0.001){
+					this.addActor(new Demon(j, i, this));
+				} else if(rand < 0.0025){
+				    this.addActor(new Teleporter(j, i, this));
+			    } else if(rand < 0.005){
+					this.addActor(new Monster(j, i, this));
+				} else if(rand < 0.1){
 					this.addActor(new Box(j, i, this));
 				} else {
 					continue;
@@ -34,7 +36,6 @@ Stage.prototype.initialize=function(){
 			} 
 		}
 	}
-	this.addActor(new Demon(9,1, this));
 }
 Stage.prototype.render=function(ws){
 
@@ -49,7 +50,9 @@ Stage.prototype.render=function(ws){
 					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'demonImage'}));
 				} else if (cell instanceof Monster){
 					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'monsterImage'}));
-				} else if (cell instanceof Box){
+				} else if (cell instanceof Teleporter) {
+					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'teleporterImage'}));
+			    } else if (cell instanceof Box){
 					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'boxImage'}));
 				} else if (cell instanceof Player){
 					ws.send(JSON.stringify({'x': j*25, 'y': i*25, 'type': 'render', 'src':'playerImage'}));
@@ -77,6 +80,11 @@ function Demon(x, y, stage){
 	this.y = y;
 	this.stage = stage;
 }
+function Teleporter(x, y, stage){
+	this.x = x;
+	this.y = y;
+	this.stage = stage;
+}
 function Box(x, y, stage){
 	this.x = x;
 	this.y = y;
@@ -98,6 +106,29 @@ function randomMove(){
 Monster.prototype.move=function(){
 	xDir = randomMove();
 	yDir = randomMove();
+	nextCell = this.stage.getActor(this.x+xDir,this.y+yDir);
+	if(this.stage.checkMovement(this.x, this.y)){ 
+		if(this.stage.check(this.x+xDir, this.y+yDir) && (nextCell == null || nextCell instanceof Player)){
+			Stage.setImage(this.x, this.y, 'blankImage');
+			this.x+=xDir;
+			this.y+=yDir;
+			Stage.setImage(this.x, this.y, 'monsterImage');
+			if(nextCell != null && nextCell instanceof Player){
+				wss.broadcast(JSON.stringify({'id': nextCell.id, 'type':'death'}));
+				console.log("GAME OVER!");
+				this.stage.removeActor(nextCell);
+			}
+        }
+	} else {
+		this.stage.removeActor(this);
+		Stage.setImage(this.x, this.y, 'blankImage');				
+        console.log("MONSTER KILLED at "+this.x+", "+this.y);
+	}
+}
+
+Teleporter.prototype.move=function(){
+	xDir = randomInt(1,this.width-1);
+	yDir = randomMove(1, this.height-1);
 	nextCell = this.stage.getActor(this.x+xDir,this.y+yDir);
 	if(this.stage.checkMovement(this.x, this.y)){ 
 		if(this.stage.check(this.x+xDir, this.y+yDir) && (nextCell == null || nextCell instanceof Player)){
@@ -214,7 +245,7 @@ Stage.prototype.checkMovement=function(x,y){
 Stage.prototype.moveMonsters=function(){
 	var monsters = false;
 	for(var i=0;i<this.actors.length;i++){
-		if(this.actors[i] instanceof Monster || this.actors[i] instanceof Demon){
+		if(this.actors[i] instanceof Monster || this.actors[i] instanceof Demon || this.actors[i] instanceof Teleporter){
 			this.actors[i].move();	
 			monsters = true;
 		}
@@ -351,7 +382,7 @@ Box.prototype.move=function(direction){
 			Stage.setImage(this.x, this.y, 'boxImage');
 			return true;
 		}
-		if(actor instanceof Monster || actor instanceof Player){
+		if(!(actor instanceof Box)){
 			return false;
 		}
 		if(actor.move(direction)){
@@ -373,7 +404,7 @@ Stage.prototype.moveBoxes=function(x, y, direction){
 	var actor = this.getActor(x, y);
 	var index = this.actors.indexOf(actor);
 	if(actor == null) return true;
-	if(actor instanceof Monster || actor instanceof Player) return false;
+	if(!(actor instanceof Box)) return false;
 	return this.actors[index].move(direction);
 }
 updateInterval = null;
