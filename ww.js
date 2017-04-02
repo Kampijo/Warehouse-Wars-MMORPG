@@ -23,9 +23,9 @@ Stage.prototype.initialize=function(){
 				if(i == 0 || j == 0 || i == this.height-1 || j == this.width-1){
 					continue;
 				} else if(rand < 0.001){
-					this.addActor(new Demon(j, i, this));
+					this.addActor(new Teleporter(j, i, this));
 				} else if(rand < 0.0025){
-				    this.addActor(new Teleporter(j, i, this));
+				    this.addActor(new Demon(j, i, this));
 			    } else if(rand < 0.005){
 					this.addActor(new Monster(j, i, this));
 				} else if(rand < 0.1){
