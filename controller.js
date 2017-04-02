@@ -287,6 +287,9 @@ $(function(){
 				}
 				$('#currentUsers').html(usersHTML);
 			} else if (res.type == "player" && res.id == sessionStorage.getItem('user')) {
+				var img = document.getElementById("You");
+				console.log(img.src+" at "+res.x+","+res.y);
+				ctx.drawImage(img, res.x, res.y, 24, 24);	
 			}
 		}
 		document.addEventListener('keydown', function(event) { 

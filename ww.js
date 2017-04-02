@@ -440,7 +440,6 @@ wss.on('connection', function(ws) {
 		console.log(playerMove.direction);
 		var player = stage.getPlayer(playerMove.id);
 		if(player){
-			var prevCoord = Stage.getStageId(player.x, player.y);
 			stage.movePlayer(playerMove.direction, playerMove.id);
 			wss.broadcast(JSON.stringify({'type': 'player', 'id': playerMove.id, 'x': player.x, 'y': player.y}));
 			//stage.step();
