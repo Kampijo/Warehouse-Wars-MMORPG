@@ -26,7 +26,7 @@ Stage.prototype.initialize=function(){
 					this.addActor(new Teleporter(j, i, this));
 				} else if(rand < 0.0025){
 				    this.addActor(new Demon(j, i, this));
-			    } else if(rand < 0.005){
+			    } else if(rand < 0.05){
 					this.addActor(new Monster(j, i, this));
 				} else if(rand < 0.1){
 					this.addActor(new Box(j, i, this));
@@ -150,17 +150,15 @@ Teleporter.prototype.move=function(){
 }
 Demon.prototype.move=function(){
 	if(this.stage.checkMovement(this.x, this.y)){
-		loop1:
-		for(var i = -1; i <= 1; i++){
-			loop2:
-			for(var j = -1; j <= 1; j++){
-				if(i == 0 && j == 0) continue;
-				nextCell = this.stage.getActor(this.x+j, this.y+i);
-				if(this.stage.check(this.x+j, this.y+i) && (nextCell == null || nextCell instanceof Player)){
-					xDir = j;
-					yDir = i;
-					break loop1;
-				}
+		while(true){
+			var i = randomMove();
+			var j = randomMove();
+			if(i == 0 && j == 0) continue;
+			nextCell = this.stage.getActor(this.x+j, this.y+i);
+			if(this.stage.check(this.x+j, this.y+i) && (nextCell == null || nextCell instanceof Player)){
+				xDir = j;
+				yDir = i;
+				break;
 			}
 		}
 		Stage.setImage(this.x, this.y, 'blankImage');
