@@ -24,7 +24,7 @@ Stage.prototype.initialize=function(){
 					continue;
 				} else if(rand < 0.005){
 					this.addActor(new Demon(j, i, this));
-				} else if(rand < 0.05){
+				} else if(rand < 0.025){
 					this.addActor(new Monster(j, i, this));
 				} else if(rand < 0.3){
 					this.addActor(new Box(j, i, this));

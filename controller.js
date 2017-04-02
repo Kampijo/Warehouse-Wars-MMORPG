@@ -223,7 +223,8 @@ function sendMobile(){
 	move = true;
 }
 function userFunction(){
-	alert("SHAKE! SHAKE!");
+	if(login) logoutFunction();
+	else loginFunction();
 }
 $(function(){
 
